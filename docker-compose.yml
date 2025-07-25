@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: time-deposit-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=timedeposits
+      - NODE_ENV=development
+    volumes:
+      - ./src:/app/src
+      - ./node_modules:/app/node_modules
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./nest-cli.json:/app/nest-cli.json
+      - ./docker-entrypoint.sh:/app/docker-entrypoint.sh
+    command: >-
+      sh -c "chmod +x /app/docker-entrypoint.sh && /app/docker-entrypoint.sh npm run seed && npm run start:dev"
+    networks:
+      - time-deposit-network
+
+  postgres:
+    image: postgres:13-alpine
+    container_name: time-deposit-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=timedeposits
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - time-deposit-network
+
+networks:
+  time-deposit-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
