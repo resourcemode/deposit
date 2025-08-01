@@ -1,10 +1,10 @@
 # Time Deposit System - NestJS Implementation
 
-[![Unit Tests](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/Unit%20Tests/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/unit-tests.yml)
-[![Integration Tests](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/Integration%20Tests/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/integration-tests.yml)
-[![Security Scan](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/Security%20Scan/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/security-scan.yml)
-[![Comprehensive CI](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/Comprehensive%20CI/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/comprehensive-ci.yml)
-[![codecov](https://codecov.io/gh/YOUR_USERNAME/YOUR_REPO_NAME/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/YOUR_REPO_NAME)
+[![Unit Tests](https://github.com/resourcemode/deposit/workflows/Unit%20Tests/badge.svg)](https://github.com/resourcemode/deposit/actions/workflows/unit-tests.yml)
+[![Integration Tests](https://github.com/resourcemode/deposit/workflows/Integration%20Tests/badge.svg)](https://github.com/resourcemode/deposit/actions/workflows/integration-tests.yml)
+[![Security Scan](https://github.com/resourcemode/deposit/workflows/Security%20Scan/badge.svg)](https://github.com/resourcemode/deposit/actions/workflows/security-scan.yml)
+[![Comprehensive CI](https://github.com/resourcemode/deposit/workflows/Comprehensive%20CI/badge.svg)](https://github.com/resourcemode/deposit/actions/workflows/comprehensive-ci.yml)
+[![codecov](https://codecov.io/gh/resourcemode/deposit/branch/main/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/resourcemode/deposit)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -130,8 +130,15 @@ This project uses GitHub Actions with **separate workflows** for unit and integr
 
 4. **Comprehensive CI** (`.github/workflows/comprehensive-ci.yml`)
    - Orchestrates unit tests, integration tests, and security scans
-   - Runs all workflows in parallel for faster feedback
-   - Provides unified summary of all test and security results
+   - Runs all workflows in parallel for efficiency
+   - Provides unified status reporting
+   - Required for release automation
+
+5. **Automated Release** (`.github/workflows/release.yml`)
+   - Automatically creates release tags on successful CI completion
+   - Increments semantic version numbers (patch version)
+   - Creates GitHub releases with detailed changelogs
+   - Only triggers on main branch after comprehensive CI success
 
 ### Benefits of Separate Workflows
 

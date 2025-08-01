@@ -38,8 +38,10 @@ jobs:
     
     - name: Upload coverage to Codecov (Node 20.x only)
       if: matrix.node-version == '20.x'
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         file: ./coverage/lcov.info
         flags: unit-tests
         name: unit-tests-coverage
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: false

@@ -1,0 +1,152 @@
+# Automated Release Tagging - Creates release tags on successful CI
+name: Release
+
+on:
+  workflow_run:
+    workflows: ["Comprehensive CI"]
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  contents: write  # Required to create tags and releases
+
+jobs:
+  create-release:
+    name: Create Release Tag
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for proper tag generation
+    
+    - name: Get current date and time
+      id: datetime
+      run: |
+        echo "timestamp=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+        echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        echo "time=$(date +'%H:%M:%S UTC')" >> $GITHUB_OUTPUT
+    
+    - name: Get latest tag
+      id: latest_tag
+      run: |
+        # Get the latest tag, if any
+        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+        echo "Latest tag found: $LATEST_TAG"
+        
+        # Extract version numbers
+        VERSION=${LATEST_TAG#v}
+        IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
+        MAJOR=${VERSION_PARTS[0]:-0}
+        MINOR=${VERSION_PARTS[1]:-0}
+        PATCH=${VERSION_PARTS[2]:-0}
+        
+        # Increment patch version for automatic releases
+        NEW_PATCH=$((PATCH + 1))
+        NEW_TAG="v${MAJOR}.${MINOR}.${NEW_PATCH}"
+        
+        echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+        echo "New tag will be: $NEW_TAG"
+    
+    - name: Check if tag already exists
+      id: tag_exists
+      run: |
+        if git rev-parse "${{ steps.latest_tag.outputs.new_tag }}" >/dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+          echo "Tag ${{ steps.latest_tag.outputs.new_tag }} already exists"
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "Tag ${{ steps.latest_tag.outputs.new_tag }} does not exist"
+        fi
+    
+    - name: Create release tag
+      if: steps.tag_exists.outputs.exists == 'false'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+        TAG_NAME="${{ steps.latest_tag.outputs.new_tag }}"
+        COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
+        
+        # Create annotated tag
+        git tag -a "$TAG_NAME" "$COMMIT_SHA" -m "Automated release $TAG_NAME
+        
+        Generated on: ${{ steps.datetime.outputs.date }} at ${{ steps.datetime.outputs.time }}
+        Commit: $COMMIT_SHA
+        
+        This release was automatically created after successful CI pipeline completion.
+        
+        Changes included in this release:
+        - All unit tests passed ✅
+        - All integration tests passed ✅  
+        - Security scan completed ✅
+        - Code coverage reports generated ✅"
+        
+        # Push the tag
+        git push origin "$TAG_NAME"
+        
+        echo "✅ Created and pushed tag: $TAG_NAME"
+    
+    - name: Create GitHub Release
+      if: steps.tag_exists.outputs.exists == 'false'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.latest_tag.outputs.new_tag }}
+        release_name: Release ${{ steps.latest_tag.outputs.new_tag }}
+        body: |
+          ## 🚀 Automated Release ${{ steps.latest_tag.outputs.new_tag }}
+          
+          **Generated on:** ${{ steps.datetime.outputs.date }} at ${{ steps.datetime.outputs.time }}  
+          **Commit:** ${{ github.event.workflow_run.head_sha }}
+          
+          This release was automatically created after successful completion of the comprehensive CI pipeline.
+          
+          ### ✅ Quality Assurance
+          - **Unit Tests:** All passed
+          - **Integration Tests:** All passed with database connectivity
+          - **Security Scan:** CodeQL analysis completed
+          - **Code Coverage:** Reports generated and uploaded
+          
+          ### 🔧 What's Included
+          - Time deposit interest calculation with SOLID principles
+          - RESTful API endpoints for deposit management
+          - PostgreSQL database integration
+          - Comprehensive test suite
+          - Docker containerization
+          
+          ### 📋 API Endpoints
+          - `GET /time-deposits` - Retrieve all time deposits
+          - `PATCH /time-deposits/update-balances` - Update balances by plan type
+          
+          ---
+          
+          **Full Changelog:** https://github.com/resourcemode/deposit/compare/${{ steps.latest_tag.outputs.latest_tag }}...${{ steps.latest_tag.outputs.new_tag }}
+        draft: false
+        prerelease: false
+    
+    - name: Release Summary
+      if: steps.tag_exists.outputs.exists == 'false'
+      run: |
+        echo "🎉 Release Summary"
+        echo "=================="
+        echo "✅ Tag created: ${{ steps.latest_tag.outputs.new_tag }}"
+        echo "✅ GitHub release created"
+        echo "📅 Release date: ${{ steps.datetime.outputs.date }}"
+        echo "🕒 Release time: ${{ steps.datetime.outputs.time }}"
+        echo "📝 Commit: ${{ github.event.workflow_run.head_sha }}"
+        echo ""
+        echo "🔗 View release: https://github.com/resourcemode/deposit/releases/tag/${{ steps.latest_tag.outputs.new_tag }}"
+    
+    - name: Skip Release (Tag Exists)
+      if: steps.tag_exists.outputs.exists == 'true'
+      run: |
+        echo "⚠️  Skipping release creation"
+        echo "Tag ${{ steps.latest_tag.outputs.new_tag }} already exists"
+        echo "This may happen if multiple commits were pushed quickly"
