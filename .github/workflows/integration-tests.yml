@@ -6,6 +6,7 @@ on:
     branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
+  workflow_call:  # Allow this workflow to be called by other workflows
 
 jobs:
   integration-tests:

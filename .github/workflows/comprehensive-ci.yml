@@ -18,11 +18,16 @@ jobs:
     name: Integration Tests  
     uses: ./.github/workflows/integration-tests.yml
 
-  # Summary job that depends on both unit and integration tests
+  # Security scan runs in parallel with other tests
+  security-scan:
+    name: Security Scan
+    uses: ./.github/workflows/security-scan.yml
+
+  # Summary job that depends on all workflows
   ci-summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [unit-tests, integration-tests]
+    needs: [unit-tests, integration-tests, security-scan]
     if: always()
     
     steps:
@@ -30,12 +35,13 @@ jobs:
       run: |
         echo "Unit Tests: ${{ needs.unit-tests.result }}"
         echo "Integration Tests: ${{ needs.integration-tests.result }}"
+        echo "Security Scan: ${{ needs.security-scan.result }}"
         
-        if [[ "${{ needs.unit-tests.result }}" == "failure" || "${{ needs.integration-tests.result }}" == "failure" ]]; then
-          echo "❌ Some tests failed"
+        if [[ "${{ needs.unit-tests.result }}" == "failure" || "${{ needs.integration-tests.result }}" == "failure" || "${{ needs.security-scan.result }}" == "failure" ]]; then
+          echo "❌ Some tests or security scans failed"
           exit 1
-        elif [[ "${{ needs.unit-tests.result }}" == "success" && "${{ needs.integration-tests.result }}" == "success" ]]; then
-          echo "✅ All tests passed successfully!"
+        elif [[ "${{ needs.unit-tests.result }}" == "success" && "${{ needs.integration-tests.result }}" == "success" && "${{ needs.security-scan.result }}" == "success" ]]; then
+          echo "✅ All tests and security scans passed successfully!"
         else
           echo "⚠️ Tests completed with warnings"
         fi

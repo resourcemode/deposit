@@ -1,0 +1,213 @@
+# Security Static Analysis - Vulnerability detection and code security scanning
+name: Security Scan
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+  workflow_call:  # Allow this workflow to be called by other workflows
+  schedule:
+    # Run security scan weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+
+jobs:
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run npm audit
+      run: |
+        echo "Running npm audit..."
+        npm audit --audit-level=moderate --json > npm-audit-results.json || true
+        
+        # Display results in a readable format
+        echo "=== NPM Audit Results ==="
+        npm audit --audit-level=moderate || true
+        
+        # Check if there are high or critical vulnerabilities
+        HIGH_VULNS=$(cat npm-audit-results.json | jq -r '.metadata.vulnerabilities.high // 0')
+        CRITICAL_VULNS=$(cat npm-audit-results.json | jq -r '.metadata.vulnerabilities.critical // 0')
+        
+        echo "High vulnerabilities: $HIGH_VULNS"
+        echo "Critical vulnerabilities: $CRITICAL_VULNS"
+        
+        if [ "$HIGH_VULNS" -gt 0 ] || [ "$CRITICAL_VULNS" -gt 0 ]; then
+          echo "❌ High or critical vulnerabilities found!"
+          exit 1
+        else
+          echo "✅ No high or critical vulnerabilities found"
+        fi
+    
+    - name: Upload npm audit results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: npm-audit-results
+        path: npm-audit-results.json
+
+  codeql-analysis:
+    name: CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+        # Override default queries with security-focused ones
+        queries: security-extended,security-and-quality
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build --if-present
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        category: "/language:${{matrix.language}}"
+
+  eslint-security:
+    name: ESLint Security Rules
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install ESLint security plugins
+      run: |
+        npm install --save-dev eslint-plugin-security eslint-plugin-node-security || true
+    
+    - name: Run ESLint with security rules
+      run: |
+        # Create a temporary ESLint config for security scanning
+        cat > .eslintrc.security.js << 'EOF'
+        module.exports = {
+          extends: ['.eslintrc.js'],
+          plugins: ['security'],
+          rules: {
+            'security/detect-buffer-noassert': 'error',
+            'security/detect-child-process': 'warn',
+            'security/detect-disable-mustache-escape': 'error',
+            'security/detect-eval-with-expression': 'error',
+            'security/detect-no-csrf-before-method-override': 'error',
+            'security/detect-non-literal-fs-filename': 'warn',
+            'security/detect-non-literal-regexp': 'warn',
+            'security/detect-non-literal-require': 'warn',
+            'security/detect-object-injection': 'warn',
+            'security/detect-possible-timing-attacks': 'warn',
+            'security/detect-pseudoRandomBytes': 'error',
+            'security/detect-unsafe-regex': 'error'
+          }
+        };
+        EOF
+        
+        # Run ESLint with security configuration
+        npx eslint --config .eslintrc.security.js "src/**/*.ts" --format json > eslint-security-results.json || true
+        
+        # Display results
+        echo "=== ESLint Security Scan Results ==="
+        npx eslint --config .eslintrc.security.js "src/**/*.ts" || true
+    
+    - name: Upload ESLint security results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: eslint-security-results
+        path: eslint-security-results.json
+
+  secrets-scan:
+    name: Secrets Detection
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for secret scanning
+    
+    - name: Run TruffleHog OSS
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+
+  security-summary:
+    name: Security Scan Summary
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, codeql-analysis, eslint-security, secrets-scan]
+    if: always()
+    
+    steps:
+    - name: Security scan summary
+      run: |
+        echo "=== Security Scan Summary ==="
+        echo "Dependency Scan: ${{ needs.dependency-scan.result }}"
+        echo "CodeQL Analysis: ${{ needs.codeql-analysis.result }}"
+        echo "ESLint Security: ${{ needs.eslint-security.result }}"
+        echo "Secrets Detection: ${{ needs.secrets-scan.result }}"
+        
+        # Check if any critical security scans failed
+        if [[ "${{ needs.dependency-scan.result }}" == "failure" ]]; then
+          echo "❌ Dependency vulnerabilities detected!"
+          FAILED=true
+        fi
+        
+        if [[ "${{ needs.codeql-analysis.result }}" == "failure" ]]; then
+          echo "❌ CodeQL security issues detected!"
+          FAILED=true
+        fi
+        
+        if [[ "${{ needs.secrets-scan.result }}" == "failure" ]]; then
+          echo "❌ Secrets detected in code!"
+          FAILED=true
+        fi
+        
+        if [[ "$FAILED" == "true" ]]; then
+          echo "🚨 Security scan failed - please review and fix issues"
+          exit 1
+        else
+          echo "✅ All security scans passed successfully!"
+        fi
