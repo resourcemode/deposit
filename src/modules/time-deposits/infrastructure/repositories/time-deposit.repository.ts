@@ -57,9 +57,6 @@ export class TimeDepositRepository implements ITimeDepositRepository {
     // Get all time deposits
     const timeDeposits = await this.findAll();
 
-    // Use the original TimeDepositCalculator to update balances
-    // This adheres to the requirement not to modify the updateBalance method signature
-    // The method is called as-is, maintaining compatibility
     this.timeDepositCalculator.updateBalance(timeDeposits);
 
     // Save the updated time deposits back to the database
