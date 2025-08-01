@@ -9,18 +9,24 @@ async function bootstrap() {
 
   // Swagger/OpenAPI configuration
   const config = new DocumentBuilder()
-    .setTitle('Time Deposit System API')
-    .setDescription('RESTful API for managing time deposits with interest calculations based on plan types')
-    .setVersion('1.0')
-    .addTag('time-deposits', 'Time deposit management endpoints')
-    .setContact('Time Deposit System', 'https://github.com/resourcemode/deposit', 'support@timedeposit.com')
-    .setLicense('MIT', 'https://opensource.org/licenses/MIT')
+    .setTitle("Time Deposit System API")
+    .setDescription(
+      "RESTful API for managing time deposits with interest calculations based on plan types",
+    )
+    .setVersion("1.0")
+    .addTag("time-deposits", "Time deposit management endpoints")
+    .setContact(
+      "Time Deposit System",
+      "https://github.com/resourcemode/deposit",
+      "support@timedeposit.com",
+    )
+    .setLicense("MIT", "https://opensource.org/licenses/MIT")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document, {
-    customSiteTitle: 'Time Deposit API Documentation',
-    customCss: '.swagger-ui .topbar { display: none }',
+  SwaggerModule.setup("api", app, document, {
+    customSiteTitle: "Time Deposit API Documentation",
+    customCss: ".swagger-ui .topbar { display: none }",
     swaggerOptions: {
       persistAuthorization: true,
       displayRequestDuration: true,

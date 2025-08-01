@@ -3,14 +3,14 @@ name: Comprehensive CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   actions: read
   contents: read
-  security-events: write  # Required for CodeQL analysis in security-scan workflow
+  security-events: write # Required for CodeQL analysis in security-scan workflow
 
 jobs:
   # Unit tests run first (fast feedback)
@@ -20,7 +20,7 @@ jobs:
 
   # Integration tests run in parallel with unit tests
   integration-tests:
-    name: Integration Tests  
+    name: Integration Tests
     uses: ./.github/workflows/integration-tests.yml
 
   # Security scan runs in parallel with other tests
@@ -34,19 +34,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: [unit-tests, integration-tests, security-scan]
     if: always()
-    
+
     steps:
-    - name: Check test results
-      run: |
-        echo "Unit Tests: ${{ needs.unit-tests.result }}"
-        echo "Integration Tests: ${{ needs.integration-tests.result }}"
-        echo "Security Scan: ${{ needs.security-scan.result }}"
-        
-        if [[ "${{ needs.unit-tests.result }}" == "failure" || "${{ needs.integration-tests.result }}" == "failure" || "${{ needs.security-scan.result }}" == "failure" ]]; then
-          echo "❌ Some tests or security scans failed"
-          exit 1
-        elif [[ "${{ needs.unit-tests.result }}" == "success" && "${{ needs.integration-tests.result }}" == "success" && "${{ needs.security-scan.result }}" == "success" ]]; then
-          echo "✅ All tests and security scans passed successfully!"
-        else
-          echo "⚠️ Tests completed with warnings"
-        fi
+      - name: Check test results
+        run: |
+          echo "Unit Tests: ${{ needs.unit-tests.result }}"
+          echo "Integration Tests: ${{ needs.integration-tests.result }}"
+          echo "Security Scan: ${{ needs.security-scan.result }}"
+
+          if [[ "${{ needs.unit-tests.result }}" == "failure" || "${{ needs.integration-tests.result }}" == "failure" || "${{ needs.security-scan.result }}" == "failure" ]]; then
+            echo "❌ Some tests or security scans failed"
+            exit 1
+          elif [[ "${{ needs.unit-tests.result }}" == "success" && "${{ needs.integration-tests.result }}" == "success" && "${{ needs.security-scan.result }}" == "success" ]]; then
+            echo "✅ All tests and security scans passed successfully!"
+          else
+            echo "⚠️ Tests completed with warnings"
+          fi

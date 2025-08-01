@@ -26,6 +26,7 @@ Once the application is running, you can access the interactive Swagger API docu
 **🔗 [http://localhost:3000/api](http://localhost:3000/api)**
 
 The Swagger UI provides:
+
 - ✅ **Interactive API Testing** - Test endpoints directly from the browser
 - 📋 **Complete API Schema** - Detailed request/response models
 - 🔍 **Parameter Documentation** - All query parameters and request bodies
@@ -40,6 +41,7 @@ The Swagger UI provides:
 ### Response Models
 
 #### TimeDepositDto
+
 ```json
 {
   "id": 1,

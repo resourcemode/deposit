@@ -13,45 +13,50 @@ import { Decimal } from "decimal.js";
  */
 export class TimeDepositDto {
   @ApiProperty({
-    description: 'Unique identifier for the time deposit',
+    description: "Unique identifier for the time deposit",
     example: 1,
-    type: 'integer'
+    type: "integer",
   })
   id: number;
 
   @ApiProperty({
-    description: 'Plan type determining interest calculation strategy',
-    example: 'BASIC',
-    enum: ['BASIC', 'PREMIUM', 'STUDENT']
+    description: "Plan type determining interest calculation strategy",
+    example: "BASIC",
+    enum: ["BASIC", "PREMIUM", "STUDENT"],
   })
   planType: string;
 
   @ApiProperty({
-    description: 'Current balance of the time deposit (serialized as string for precision)',
-    example: '1002.50',
-    type: 'string'
+    description:
+      "Current balance of the time deposit (serialized as string for precision)",
+    example: "1002.50",
+    type: "string",
   })
   balance: string; // Serialized as string for precise financial values
 
   @ApiProperty({
-    description: 'Number of days since deposit creation',
+    description: "Number of days since deposit creation",
     example: 90,
-    type: 'integer'
+    type: "integer",
   })
   days: number;
 
   @ApiProperty({
-    description: 'List of withdrawals made from this time deposit',
-    type: 'array',
+    description: "List of withdrawals made from this time deposit",
+    type: "array",
     items: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'integer', example: 1 },
-        timeDepositId: { type: 'integer', example: 1 },
-        amount: { type: 'string', example: '100.00' },
-        date: { type: 'string', format: 'date-time', example: '2024-01-15T10:30:00.000Z' }
-      }
-    }
+        id: { type: "integer", example: 1 },
+        timeDepositId: { type: "integer", example: 1 },
+        amount: { type: "string", example: "100.00" },
+        date: {
+          type: "string",
+          format: "date-time",
+          example: "2024-01-15T10:30:00.000Z",
+        },
+      },
+    },
   })
   withdrawals: WithdrawalDto[];
 
@@ -84,31 +89,31 @@ export class TimeDepositDto {
  */
 export class WithdrawalDto {
   @ApiProperty({
-    description: 'Unique identifier for the withdrawal',
+    description: "Unique identifier for the withdrawal",
     example: 1,
-    type: 'integer'
+    type: "integer",
   })
   id: number;
 
   @ApiProperty({
-    description: 'ID of the time deposit this withdrawal belongs to',
+    description: "ID of the time deposit this withdrawal belongs to",
     example: 1,
-    type: 'integer'
+    type: "integer",
   })
   timeDepositId: number;
 
   @ApiProperty({
-    description: 'Amount withdrawn (serialized as string for precision)',
-    example: '100.00',
-    type: 'string'
+    description: "Amount withdrawn (serialized as string for precision)",
+    example: "100.00",
+    type: "string",
   })
   amount: string; // Serialized as string for precise financial values
 
   @ApiProperty({
-    description: 'Date when the withdrawal was made',
-    example: '2024-01-15T10:30:00.000Z',
-    type: 'string',
-    format: 'date-time'
+    description: "Date when the withdrawal was made",
+    example: "2024-01-15T10:30:00.000Z",
+    type: "string",
+    format: "date-time",
   })
   date: Date;
 }
