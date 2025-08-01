@@ -17,10 +17,45 @@ A RESTful API for managing time deposits, built with NestJS following Clean Arch
 - PostgreSQL database integration
 - Dockerized application
 
-## API Endpoints
+## API Documentation
+
+### Interactive API Documentation (Swagger)
+
+Once the application is running, you can access the interactive Swagger API documentation at:
+
+**🔗 [http://localhost:3000/api](http://localhost:3000/api)**
+
+The Swagger UI provides:
+- ✅ **Interactive API Testing** - Test endpoints directly from the browser
+- 📋 **Complete API Schema** - Detailed request/response models
+- 🔍 **Parameter Documentation** - All query parameters and request bodies
+- 📖 **Endpoint Descriptions** - Comprehensive API documentation
+- 🚀 **Try It Out** - Execute real API calls with sample data
+
+### API Endpoints
 
 - `GET /time-deposits` - Retrieves all time deposits with their withdrawals
 - `PATCH /time-deposits/update-balances` - Updates the balances of all time deposits according to their plan types
+
+### Response Models
+
+#### TimeDepositDto
+```json
+{
+  "id": 1,
+  "planType": "BASIC",
+  "balance": "1002.50",
+  "days": 90,
+  "withdrawals": [
+    {
+      "id": 1,
+      "timeDepositId": 1,
+      "amount": "100.00",
+      "date": "2024-01-15T10:30:00.000Z"
+    }
+  ]
+}
+```
 
 ## Running with Docker
 
