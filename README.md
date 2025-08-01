@@ -1,5 +1,13 @@
 # Time Deposit System - NestJS Implementation
 
+[![Unit Tests](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/Unit%20Tests/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/unit-tests.yml)
+[![Integration Tests](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/Integration%20Tests/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/integration-tests.yml)
+[![Security Scan](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/Security%20Scan/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/security-scan.yml)
+[![Comprehensive CI](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/workflows/Comprehensive%20CI/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/comprehensive-ci.yml)
+[![codecov](https://codecov.io/gh/YOUR_USERNAME/YOUR_REPO_NAME/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/YOUR_REPO_NAME)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A RESTful API for managing time deposits, built with NestJS following Clean Architecture and SOLID principles.
 
 ## Features
@@ -115,18 +123,24 @@ This project uses GitHub Actions with **separate workflows** for unit and integr
    - Tests database connectivity and data operations
    - Generates integration test coverage
 
-3. **Comprehensive CI** (`.github/workflows/comprehensive-ci.yml`)
-   - Orchestrates both unit and integration tests
-   - Runs tests in parallel for faster feedback
-   - Provides summary of all test results
+3. **Security Scan** (`.github/workflows/security-scan.yml`)
+   - CodeQL static analysis for security issues
+   - Runs weekly and on every push/PR
+   - Focuses on code-level security vulnerabilities
+
+4. **Comprehensive CI** (`.github/workflows/comprehensive-ci.yml`)
+   - Orchestrates unit tests, integration tests, and security scans
+   - Runs all workflows in parallel for faster feedback
+   - Provides unified summary of all test and security results
 
 ### Benefits of Separate Workflows
 
 - **Speed**: Unit tests provide fast feedback (no DB setup)
 - **Reliability**: Unit tests don't depend on external services
-- **Clear Diagnostics**: Easy to identify logic vs. integration issues
+- **Security**: Automated vulnerability detection and code analysis
+- **Clear Diagnostics**: Easy to identify logic vs. integration vs. security issues
 - **Resource Efficiency**: Unit tests use fewer CI resources
-- **Parallel Execution**: Both workflows run simultaneously
+- **Parallel Execution**: All workflows run simultaneously
 
 ### Environment Variables for CI
 
