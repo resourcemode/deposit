@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { TimeDepositEntity } from '../../domain/entities/time-deposit.entity';
 import { Withdrawal } from '../../domain/entities/withdrawal.entity';
 import { Decimal } from 'decimal.js';
+import { PlanType } from '../../domain/models/plan.enum';
 
 @Injectable()
 export class TimeDepositSeeder {
@@ -30,9 +31,9 @@ export class TimeDepositSeeder {
 
   private async createTimeDeposits(): Promise<TimeDepositEntity[]> {
     const deposits: TimeDepositEntity[] = [
-      this.createTimeDeposit('A', 5000, 0, 30),
-      this.createTimeDeposit('B', 10000, 0, 60),
-      this.createTimeDeposit('C', 15000, 0, 90),
+      this.createTimeDeposit(PlanType.BASIC, 5000, 0, 30),
+      this.createTimeDeposit(PlanType.PREMIUM, 10000, 0, 60),
+      this.createTimeDeposit(PlanType.STUDENT, 15000, 0, 90),
     ];
 
     // Save all deposits

@@ -2,12 +2,6 @@
  * Enum for different plan types
  */
 export enum PlanType {
-  // Database/seeder plan types
-  A = 'A',
-  B = 'B',
-  C = 'C',
-  
-  // Business logic plan types
   BASIC = 'basic',
   PREMIUM = 'premium',
   STUDENT = 'student',

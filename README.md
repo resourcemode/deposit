@@ -12,7 +12,7 @@ A RESTful API for managing time deposits, built with NestJS following Clean Arch
 ## API Endpoints
 
 - `GET /time-deposits` - Retrieves all time deposits with their withdrawals
-- `POST /time-deposits/update-balances` - Updates the balances of all time deposits according to their plan types
+- `PATCH /time-deposits/update-balances` - Updates the balances of all time deposits according to their plan types
 
 ## Running with Docker
 
