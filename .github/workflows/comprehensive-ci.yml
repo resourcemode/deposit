@@ -7,6 +7,11 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  actions: read
+  contents: read
+  security-events: write  # Required for CodeQL analysis in security-scan workflow
+
 jobs:
   # Unit tests run first (fast feedback)
   unit-tests:
