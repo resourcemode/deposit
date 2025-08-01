@@ -1,20 +1,17 @@
-# Comprehensive CI - Runs both unit and integration tests
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Full CI Pipeline
+# Integration Tests - Full database integration testing
+name: Integration Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
-  build:
-
+  integration-tests:
     runs-on: ubuntu-latest
 
-    # Add PostgreSQL service for database connectivity
+    # PostgreSQL service for database connectivity
     services:
       postgres:
         image: postgres:15
@@ -34,7 +31,6 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
@@ -59,8 +55,8 @@ jobs:
     - name: Build application
       run: npm run build --if-present
     
-    - name: Run tests
-      run: npm run test:ci
+    - name: Run integration tests
+      run: npm run test:integration
       env:
         # Database connection environment variables for CI
         DATABASE_HOST: localhost
@@ -69,3 +65,11 @@ jobs:
         DATABASE_PASSWORD: postgres
         DATABASE_NAME: timedeposits
         NODE_ENV: test
+    
+    - name: Upload coverage to Codecov (Node 20.x only)
+      if: matrix.node-version == '20.x'
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: integration-tests
+        name: integration-tests-coverage

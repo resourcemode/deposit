@@ -97,6 +97,65 @@ npm run start:db
 npm run seed
 ```
 
+## CI/CD
+
+This project uses GitHub Actions with **separate workflows** for unit and integration tests, following CI/CD best practices:
+
+### Workflow Structure
+
+1. **Unit Tests** (`.github/workflows/unit-tests.yml`)
+   - Fast feedback without database dependencies
+   - Runs on Node.js versions 18.x, 20.x, and 22.x
+   - No external services required
+   - Generates unit test coverage
+
+2. **Integration Tests** (`.github/workflows/integration-tests.yml`)
+   - Full database integration testing
+   - PostgreSQL 15 service with health checks
+   - Tests database connectivity and data operations
+   - Generates integration test coverage
+
+3. **Comprehensive CI** (`.github/workflows/comprehensive-ci.yml`)
+   - Orchestrates both unit and integration tests
+   - Runs tests in parallel for faster feedback
+   - Provides summary of all test results
+
+### Benefits of Separate Workflows
+
+- **Speed**: Unit tests provide fast feedback (no DB setup)
+- **Reliability**: Unit tests don't depend on external services
+- **Clear Diagnostics**: Easy to identify logic vs. integration issues
+- **Resource Efficiency**: Unit tests use fewer CI resources
+- **Parallel Execution**: Both workflows run simultaneously
+
+### Environment Variables for CI
+
+The following environment variables are automatically set in CI:
+
+```
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_NAME=timedeposits
+NODE_ENV=test
+```
+
+### Running Tests Locally
+
+To run tests locally with the same configuration as CI:
+
+```sh
+# Start the database
+npm run start:db
+
+# Run tests with CI configuration
+npm run test:ci
+
+# Or run tests with coverage
+npm run test:cov
+```
+
 ### Run the server
 
 ```sh

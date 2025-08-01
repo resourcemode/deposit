@@ -1,0 +1,41 @@
+# Comprehensive CI - Orchestrates unit and integration tests
+name: Comprehensive CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # Unit tests run first (fast feedback)
+  unit-tests:
+    name: Unit Tests
+    uses: ./.github/workflows/unit-tests.yml
+
+  # Integration tests run in parallel with unit tests
+  integration-tests:
+    name: Integration Tests  
+    uses: ./.github/workflows/integration-tests.yml
+
+  # Summary job that depends on both unit and integration tests
+  ci-summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    if: always()
+    
+    steps:
+    - name: Check test results
+      run: |
+        echo "Unit Tests: ${{ needs.unit-tests.result }}"
+        echo "Integration Tests: ${{ needs.integration-tests.result }}"
+        
+        if [[ "${{ needs.unit-tests.result }}" == "failure" || "${{ needs.integration-tests.result }}" == "failure" ]]; then
+          echo "❌ Some tests failed"
+          exit 1
+        elif [[ "${{ needs.unit-tests.result }}" == "success" && "${{ needs.integration-tests.result }}" == "success" ]]; then
+          echo "✅ All tests passed successfully!"
+        else
+          echo "⚠️ Tests completed with warnings"
+        fi
