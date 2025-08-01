@@ -1,6 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { Deposit } from '../../domain/models/deposit.model';
-import { ITimeDepositRepository, TIME_DEPOSIT_REPOSITORY } from '../../domain/repositories/time-deposit.repository.interface';
+import { Injectable, Inject } from "@nestjs/common";
+import { Deposit } from "../../domain/models/deposit.model";
+import {
+  ITimeDepositRepository,
+  TIME_DEPOSIT_REPOSITORY,
+} from "../../domain/repositories/time-deposit.repository.interface";
 
 @Injectable()
 export class TimeDepositService {

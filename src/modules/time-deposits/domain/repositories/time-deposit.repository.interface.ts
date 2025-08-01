@@ -1,6 +1,6 @@
-import { Deposit } from '../models/deposit.model';
+import { Deposit } from "../models/deposit.model";
 
-export const TIME_DEPOSIT_REPOSITORY = 'TIME_DEPOSIT_REPOSITORY';
+export const TIME_DEPOSIT_REPOSITORY = "TIME_DEPOSIT_REPOSITORY";
 
 export interface ITimeDepositRepository {
   findAll(): Promise<Deposit[]>;

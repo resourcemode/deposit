@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { TimeDepositEntity } from '../../domain/entities/time-deposit.entity';
-import { Withdrawal } from '../../domain/entities/withdrawal.entity';
-import { Decimal } from 'decimal.js';
-import { PlanType } from '../../domain/models/plan.enum';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { TimeDepositEntity } from "../../domain/entities/time-deposit.entity";
+import { Withdrawal } from "../../domain/entities/withdrawal.entity";
+import { Decimal } from "decimal.js";
+import { PlanType } from "../../domain/models/plan.enum";
 
 @Injectable()
 export class TimeDepositSeeder {
@@ -24,7 +24,7 @@ export class TimeDepositSeeder {
 
     // Create and save time deposits
     const deposits = await this.createTimeDeposits();
-    
+
     // Create and save withdrawals
     await this.createWithdrawals(deposits);
   }
@@ -41,10 +41,10 @@ export class TimeDepositSeeder {
   }
 
   private createTimeDeposit(
-    plan: string, 
-    principal: number, 
-    balance: number, 
-    days: number
+    plan: string,
+    principal: number,
+    balance: number,
+    days: number,
   ): TimeDepositEntity {
     const deposit = new TimeDepositEntity();
     deposit.planType = plan;
@@ -55,11 +55,13 @@ export class TimeDepositSeeder {
     return deposit;
   }
 
-  private async createWithdrawals(deposits: TimeDepositEntity[]): Promise<void> {
+  private async createWithdrawals(
+    deposits: TimeDepositEntity[],
+  ): Promise<void> {
     if (!deposits.length) return;
 
     const withdrawals: Withdrawal[] = [];
-    
+
     // Add a withdrawal for the first deposit
     const withdrawal1 = new Withdrawal();
     withdrawal1.amount = new Decimal(1000);

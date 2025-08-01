@@ -1,10 +1,10 @@
-import { NestFactory } from '@nestjs/core';
-import { CommandModule, CommandService } from 'nestjs-command';
-import { CliModule } from './cli.module';
+import { NestFactory } from "@nestjs/core";
+import { CommandModule, CommandService } from "nestjs-command";
+import { CliModule } from "./cli.module";
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(CliModule, {
-    logger: ['error', 'warn', 'log'],
+    logger: ["error", "warn", "log"],
   });
 
   try {

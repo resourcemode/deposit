@@ -33,7 +33,7 @@ The easiest way to run the application is using Docker and Docker Compose.
 docker-compose up --build
 ```
 
-If you encounter an error during ```docker-compose up --build``` because of node dependency or seeder error, it means we need to run ```npm install``` first
+If you encounter an error during `docker-compose up --build` because of node dependency or seeder error, it means we need to run `npm install` first
 
 The API will be accessible at `http://localhost:3000`
 
@@ -130,6 +130,7 @@ The application follows Clean Architecture principles, with a clear separation o
 ## Interest Calculation
 
 Interest is calculated based on plan type:
+
 - **Basic plan**: 1% interest
 - **Student plan**: 3% interest (no interest after 1 year)
 - **Premium plan**: 5% interest (interest starts after 45 days)

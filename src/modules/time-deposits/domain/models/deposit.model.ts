@@ -1,19 +1,25 @@
-import { TimeDeposit } from './time-deposit.model';
-import { Withdrawal } from '../entities/withdrawal.entity';
-import { Decimal } from 'decimal.js';
+import { TimeDeposit } from "./time-deposit.model";
+import { Withdrawal } from "../entities/withdrawal.entity";
+import { Decimal } from "decimal.js";
 
 /**
  * Domain model for TimeDeposit
  * This extends the original TimeDeposit class to ensure compatibility
  * while adding the functionality we need for the API
- * 
+ *
  * We're careful not to modify the original TimeDeposit class behavior
  * as per the refactoring constraints in the requirements.
  */
 export class Deposit extends TimeDeposit {
   withdrawals: Withdrawal[] = [];
 
-  constructor(id: number, planType: string, balance: number | string | Decimal, days: number, withdrawals: Withdrawal[] = []) {
+  constructor(
+    id: number,
+    planType: string,
+    balance: number | string | Decimal,
+    days: number,
+    withdrawals: Withdrawal[] = [],
+  ) {
     super(id, planType, balance, days);
     this.withdrawals = withdrawals;
   }
@@ -28,7 +34,7 @@ export class Deposit extends TimeDeposit {
       entity.planType,
       entity.balance, // No need to convert, TypeORM transformer handles this
       entity.days,
-      entity.withdrawals || []
+      entity.withdrawals || [],
     );
   }
 
@@ -41,7 +47,7 @@ export class Deposit extends TimeDeposit {
       planType: this.planType,
       balance: this.balance,
       days: this.days,
-      withdrawals: this.withdrawals
+      withdrawals: this.withdrawals,
     };
   }
 }

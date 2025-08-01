@@ -1,9 +1,9 @@
-import { Controller, Get, Patch } from '@nestjs/common';
-import { TimeDepositService } from '../../application/services/time-deposit.service';
-import { TimeDepositDto } from '../dtos/time-deposit.dto';
-import { Deposit } from '../../domain/models/deposit.model';
+import { Controller, Get, Patch } from "@nestjs/common";
+import { TimeDepositService } from "../../application/services/time-deposit.service";
+import { TimeDepositDto } from "../dtos/time-deposit.dto";
+import { Deposit } from "../../domain/models/deposit.model";
 
-@Controller('time-deposits')
+@Controller("time-deposits")
 export class TimeDepositController {
   constructor(private readonly timeDepositService: TimeDepositService) {}
 
@@ -14,16 +14,21 @@ export class TimeDepositController {
   @Get()
   async findAll(): Promise<TimeDepositDto[]> {
     const timeDeposits = await this.timeDepositService.findAll();
-    return timeDeposits.map(timeDeposit => TimeDepositDto.fromDomain(timeDeposit));
+    return timeDeposits.map((timeDeposit) =>
+      TimeDepositDto.fromDomain(timeDeposit),
+    );
   }
 
   /**
    * PATCH /time-deposits/update-balances
    * Updates the balances of all time deposits
    */
-  @Patch('update-balances')
+  @Patch("update-balances")
   async updateBalances(): Promise<TimeDepositDto[]> {
-    const updatedTimeDeposits = await this.timeDepositService.updateAllBalances();
-    return updatedTimeDeposits.map(timeDeposit => TimeDepositDto.fromDomain(timeDeposit));
+    const updatedTimeDeposits =
+      await this.timeDepositService.updateAllBalances();
+    return updatedTimeDeposits.map((timeDeposit) =>
+      TimeDepositDto.fromDomain(timeDeposit),
+    );
   }
 }

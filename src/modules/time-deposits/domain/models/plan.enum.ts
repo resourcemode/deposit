@@ -2,16 +2,16 @@
  * Enum for different plan types
  */
 export enum PlanType {
-  BASIC = 'basic',
-  PREMIUM = 'premium',
-  STUDENT = 'student',
+  BASIC = "basic",
+  PREMIUM = "premium",
+  STUDENT = "student",
 }
 
 /**
  * Interest rates by plan type
  */
 export const ANNUAL_INTEREST_RATES = {
-  [PlanType.BASIC]: 0.01,   // 1% annual interest
+  [PlanType.BASIC]: 0.01, // 1% annual interest
   [PlanType.PREMIUM]: 0.05, // 5% annual interest
   [PlanType.STUDENT]: 0.03, // 3% annual interest
 };
@@ -25,6 +25,6 @@ export const MIN_DAYS_FOR_INTEREST = 30;
  * Additional day requirements by plan type
  */
 export const PLAN_DAY_REQUIREMENTS = {
-  [PlanType.PREMIUM]: 45,     // Premium plans need > 45 days
-  [PlanType.STUDENT]: 366,    // Student plans need < 366 days
+  [PlanType.PREMIUM]: 45, // Premium plans need > 45 days
+  [PlanType.STUDENT]: 366, // Student plans need < 366 days
 };

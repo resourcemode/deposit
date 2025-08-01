@@ -1,5 +1,5 @@
-import { Deposit } from '../../domain/models/deposit.model';
-import { Decimal } from 'decimal.js';
+import { Deposit } from "../../domain/models/deposit.model";
+import { Decimal } from "decimal.js";
 
 /**
  * DTO for time deposit response
@@ -23,18 +23,20 @@ export class TimeDepositDto {
     dto.planType = timeDeposit.planType;
     dto.balance = timeDeposit.balance.toString(); // Convert Decimal to string for API response
     dto.days = timeDeposit.days;
-    dto.withdrawals = timeDeposit.withdrawals?.map(withdrawal => {
-      const dto = new WithdrawalDto();
-      dto.id = withdrawal.id;
-      // Safe conversion to string regardless of type
-      dto.amount = withdrawal.amount instanceof Decimal 
-        ? withdrawal.amount.toString() 
-        : String(withdrawal.amount);
-      dto.date = withdrawal.date;
-      dto.timeDepositId = withdrawal.timeDepositId;
-      return dto;
-    }) || [];
-    
+    dto.withdrawals =
+      timeDeposit.withdrawals?.map((withdrawal) => {
+        const dto = new WithdrawalDto();
+        dto.id = withdrawal.id;
+        // Safe conversion to string regardless of type
+        dto.amount =
+          withdrawal.amount instanceof Decimal
+            ? withdrawal.amount.toString()
+            : String(withdrawal.amount);
+        dto.date = withdrawal.date;
+        dto.timeDepositId = withdrawal.timeDepositId;
+        return dto;
+      }) || [];
+
     return dto;
   }
 }
