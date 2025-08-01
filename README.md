@@ -33,6 +33,8 @@ The easiest way to run the application is using Docker and Docker Compose.
 docker-compose up --build
 ```
 
+If you encounter an error during ```docker-compose up --build``` because of node dependency or seeder error, it means we need to run ```npm install``` first
+
 The API will be accessible at `http://localhost:3000`
 
 ## Running Locally
@@ -65,10 +67,6 @@ nvm install 16.16.0
 
 #### Install dependencies
 
-```sh
-yarn install
-```
-or
 ```sh
 npm install
 ```
