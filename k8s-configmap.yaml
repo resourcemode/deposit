@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: time-deposit-config
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  # Add other non-sensitive configuration here
+  # LOG_LEVEL: "info"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: time-deposit-secrets
+type: Opaque
+data:
+  # Base64 encoded secrets - replace with actual values
+  # Example: echo -n "your-database-url" | base64
+  # database-url: eW91ci1kYXRhYmFzZS11cmw=
+  # jwt-secret: eW91ci1qd3Qtc2VjcmV0
+stringData:
+  # You can also use stringData for plain text that will be automatically base64 encoded
+  # database-url: "postgresql://user:password@host:5432/database"
+  # jwt-secret: "your-jwt-secret-key"
